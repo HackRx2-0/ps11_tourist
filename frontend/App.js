@@ -1,112 +1,76 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useEffect} from 'react';
+import SplashScreen from 'react-native-splash-screen';
+import {Provider as PaperProvider} from 'react-native-paper';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {Provider as StoreProvider} from 'react-redux';
+import store from './redux/Store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {SET_TOKEN} from './redux/Actions/types';
 
-import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+//screens
+import IntroScr from './screens/IntroScr';
+import DashBoard from './screens/Dashboard/Dashboard';
+import Login from './screens/Login';
+import Signup from './screens/Signup';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+const Stack = createStackNavigator();
+function Navigation() {
+  const isAuth = useSelector(({auth}) => auth.token);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    async function checkAuth() {
+      const token = await AsyncStorage.getItem('jwt');
+      if (token) {
+        dispatch({type: SET_TOKEN, payload: token});
+      }
+      SplashScreen.hide();
+    }
+    checkAuth();
+  }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator>
+        {!isAuth ? (
+          <>
+            <Stack.Screen
+              name="intro"
+              component={IntroScr}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="login"
+              component={Login}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="signup"
+              component={Signup}
+              options={{headerShown: false}}
+            />
+          </>
+        ) : (
+          <Stack.Screen
+            name="dash"
+            component={DashBoard}
+            options={{headerShown: false}}
+          />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+function App() {
+  return (
+    <PaperProvider>
+      <StoreProvider store={store}>
+        <Navigation />
+      </StoreProvider>
+    </PaperProvider>
+  );
+}
 
 export default App;
