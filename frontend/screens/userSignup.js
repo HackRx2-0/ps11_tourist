@@ -5,7 +5,7 @@ import Carousel from './Carousel/Carousel';
 import {IconButton as Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
-import {SET_TOKEN} from '../redux/Actions/types';
+import {ADD_USER} from '../redux/Actions/types';
 
 const UserSignup = ({navigation}) => {
   const dispatch = useDispatch();
@@ -35,7 +35,16 @@ const UserSignup = ({navigation}) => {
       .then(async res => {
         // store the token
         await AsyncStorage.setItem('jwt', res.data.jwt);
-        dispatch({type: SET_TOKEN, payload: res.data.jwt});
+        dispatch({
+          type: ADD_USER,
+          payload: {
+            jwt: res.data.jwt,
+            name: res.data.name,
+            type: res.data.type,
+            email: res.data.email,
+          },
+        });
+
         // navigation.navigate('dashboard')
       })
       .catch(err => {

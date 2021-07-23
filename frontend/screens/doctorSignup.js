@@ -1,13 +1,13 @@
 import React from 'react';
 import axios from 'axios';
-import { Text, View, StyleSheet, TextInput } from 'react-native';
+import {Text, View, StyleSheet, TextInput} from 'react-native';
 import Carousel from './Carousel/Carousel';
-import { IconButton as Button } from 'react-native-paper';
+import {IconButton as Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch } from 'react-redux';
-import { SET_TOKEN } from '../redux/Actions/types';
+import {useDispatch} from 'react-redux';
+import {ADD_USER} from '../redux/Actions/types';
 
-const DoctorSignup = ({ navigation }) => {
+const DoctorSignup = ({navigation}) => {
   const dispatch = useDispatch();
   var [email, setEmail] = React.useState('');
   var [password, setPassword] = React.useState('');
@@ -15,8 +15,8 @@ const DoctorSignup = ({ navigation }) => {
   var [firstName, setFirstName] = React.useState('');
   var [lastName, setLastName] = React.useState('');
   var [phone_number, setPhoneNumber] = React.useState('');
-  var [specialisation, setSpecialisation] = React.useState('')
-  var [fees, setFees] = React.useState(0)
+  var [specialisation, setSpecialisation] = React.useState('');
+  var [fees, setFees] = React.useState(0);
 
   var [change, setChange] = React.useState(false);
 
@@ -37,11 +37,19 @@ const DoctorSignup = ({ navigation }) => {
 
     const url = 'api/signup/doctor';
     axios
-      .post(url, params, { headers: { 'content-type': 'application/json' } })
+      .post(url, params, {headers: {'content-type': 'application/json'}})
       .then(async res => {
         // store the token
         await AsyncStorage.setItem('jwt', res.data.jwt);
-        dispatch({ type: SET_TOKEN, payload: res.data.jwt });
+        dispatch({
+          type: ADD_USER,
+          payload: {
+            jwt: res.data.jwt,
+            name: res.data.name,
+            type: res.data.type,
+            email: res.data.email,
+          },
+        });
         // navigation.navigate('dashboard')
       })
       .catch(err => {
@@ -108,7 +116,7 @@ const DoctorSignup = ({ navigation }) => {
             placeholderTextColor="#3A4D7F"
             style={styles.inp}
             value={fees}
-            onChangeText={fee => setLastName(fee)}
+            onChangeText={fee => setFees(fee)}
           />
           <Button
             style={styles.btn}
@@ -151,18 +159,18 @@ const DoctorSignup = ({ navigation }) => {
             size={40}
             onPress={() => setChange(true)}
           />
-          <Text style={{ textAlign: 'center' }}>
+          <Text style={{textAlign: 'center'}}>
             Existing User?{' '}
             <Text
-              style={{ color: 'blue' }}
+              style={{color: 'blue'}}
               onPress={() => navigation.navigate('login')}>
               Login
             </Text>{' '}
           </Text>
-          <Text style={{ textAlign: 'center', color: 'blue', marginTop: 20 }}>
+          <Text style={{textAlign: 'center', color: 'blue', marginTop: 20}}>
             For doctors{' '}
             <Text
-              style={{ color: 'blue' }}
+              style={{color: 'blue'}}
               onPress={() => navigation.navigate('dashboard')}>
               Dashboard
             </Text>

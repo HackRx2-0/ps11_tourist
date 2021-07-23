@@ -72,7 +72,10 @@ router.post('/customer', async (req, res) => {
 
     const token = user.generateAuthToken()
     res.json({
-      jwt: token
+      jwt: token,
+      name: `${userData.first_name} ${userData.second_name}`,
+      type: userData.__t,
+      email: user.email
     })
   } catch (err) {
     console.error('gu', err)
@@ -105,7 +108,10 @@ router.post('/doctor', async (req, res) => {
 
     const token = user.generateAuthToken()
     res.send({
-      jwt: token
+      jwt: token,
+      name: `${doctorData.first_name} ${doctorData.second_name}`,
+      type: doctorData.__t,
+      email: user.email
     })
   } catch (err) {
     console.error(err)

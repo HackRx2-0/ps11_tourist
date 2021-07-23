@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 const socketio = require('socket.io')
 const cors = require('cors')
 const config = require('./utils')
-
+const { Cred } = require("./models/credModel");
 const corsOptions = {
   cors: true,
   origins: ["*"],
@@ -23,64 +23,37 @@ app.use(cors())
 app.use(express.json())
 app.use('/api', api)
 
+
+const findUser = async () => {
+    let user = await Cred.findOne({ email: req.body.email });
+    return user.user;
+  }
+
+
 const io = socketio(server, corsOptions)
-// io.on('connection', (socket) => {
-// 	console.log('new connection.....................')
-
-// 	socket.on('disconnect', () => {
-// 		const user = removeUser(socket.id)
-// 		console.log(`${socket.id} connection closed.....................`)
-
-// 		if (user) {
-// 			io.to(user.room).emit('message', { user: 'admin', text: `${user.name} left` })
-// 			io.to(user.room).emit('roomData', { room: user.name, users: getUsersInRoom(user.room) });
-// 		}
-// 		// for peer to peer
-// 		// socket.to
-// 	})
-
-// 	socket.on('join', ({ name, room }, callback) => {
-// 		const { error, user } = addUser({ id: socket.id, name, room })
-
-// 		if (error) return callback(error)
-
-// 		socket.emit('message', { user: 'admin', text: `${user.name} welcome to the room` })
-// 		socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name} joined` })
-
-// 		socket.join(user.room)
-
-// 		io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) })
-
-// 		callback();
-// 	})
-
-// 	socket.on('sendMessage', (message, callback) => {
-// 		const user = getUser(socket.id)
-// 		io.to(user.room).emit('message', { user: user.name, text: message });
-// 		callback()
-// 	})
-
-// })
-
+ 
 io.use((skt, next) => {
-  const username = skt.handshake.auth.name;
-  if (!username) {
+  const email = skt.handshake.auth.email;
+  if (!email) {
     return next(new Error("invalid username"));
   }
-  skt.username = username;
+  skt.email = email;
   next();
 })
 
 io.on("connection", (socket) => {
   //We are looping over the io.of("/").sockets object, which is a Map of all currently connected Socket instances, indexed by ID.
   console.log(socket.id);
+  const userId = findUser(socket.email);
+  
 
   const users = [];
-  for (let [id, socket] of io.of("/").sockets) {
-    users.push({
-      userID: id,
-      username: socket.username,
-    });
+  for (let s of io.of("/").sockets) {
+    console.log(s);
+    // users.push({
+    //   userId: ,
+    //   username: socket.username,
+    // });
   }
   socket.emit("users", users);
   //socket.broadcast.emit("user connected", ...) will emit to all connected clients, except the socket itself.
@@ -96,16 +69,8 @@ io.on("connection", (socket) => {
     })
   })
 
-  socket.on("imgMsg", (data) => {
-    socket.to(data.to).emit("imgMsg", {
-      img: true,
-      type: data.type,
-      buffer: data.buffer.toString("base64"),
-      from: socket.id,
-    });
-  })
 });
 
 
-server.listen(5002, () => `Listening on PORT ${PORT}`)
+server.listen(5000, () => `Listening on PORT ${PORT}`)
 //server.listen(PORT, '192.168.1.40', () => console.log(`connected to server on PORT ${PORT}`))
