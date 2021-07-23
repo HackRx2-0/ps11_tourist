@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 })
 
 // Dashboard
-const DashBoard = ({ navigation }) => {
+const UserDashBoard = ({ navigation }) => {
 	const [index, setIndex] = React.useState(0);
 	const [routes] = React.useState([
 		{ key: 'home', title: 'Home', icon: 'home-outline' },
@@ -51,4 +51,4 @@ const DashBoard = ({ navigation }) => {
 	);
 };
 
-export default DashBoard;
+export default UserDashBoard;

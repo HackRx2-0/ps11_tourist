@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import {SET_TOKEN} from '../redux/Actions/types';
 
-const Signup = ({navigation}) => {
+const UserSignup = ({navigation}) => {
   const dispatch = useDispatch();
   var [email, setEmail] = React.useState('');
   var [password, setPassword] = React.useState('');
@@ -205,4 +205,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Signup;
+export default UserSignup;

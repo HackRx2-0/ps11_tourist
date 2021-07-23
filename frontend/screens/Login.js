@@ -1,13 +1,13 @@
 import axios from 'axios';
 import React from 'react';
-import {Text, View, StyleSheet, TextInput} from 'react-native';
-import {IconButton as Button} from 'react-native-paper';
+import { Text, View, StyleSheet, TextInput } from 'react-native';
+import { IconButton as Button } from 'react-native-paper';
 import Carousel from './Carousel/Carousel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useDispatch} from 'react-redux';
-import {SET_TOKEN} from '../redux/Actions/types';
+import { useDispatch } from 'react-redux';
+import { SET_TOKEN } from '../redux/Actions/types';
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   var [email, setEmail] = React.useState('');
   var [password, setPassword] = React.useState('');
   const dispatch = useDispatch();
@@ -20,12 +20,12 @@ const Login = ({navigation}) => {
 
     axios
       .post('api/login', params, {
-        headers: {'content-type': 'application/json'},
+        headers: { 'content-type': 'application/json' },
       })
       .then(async res => {
         // store the token
         await AsyncStorage.setItem('jwt', res.data.jwt);
-        dispatch({type: SET_TOKEN, payload: res.data.jwt});
+        dispatch({ type: SET_TOKEN, payload: res.data.jwt });
       })
       .catch(err => {
         console.warn(err);
@@ -80,15 +80,17 @@ const Login = ({navigation}) => {
           size={40}
           onPress={() => handleLogin()}
         />
-        <Text style={{textAlign: 'center', color: 'white'}}>
+        <Text style={{ textAlign: 'center', color: 'white' }}>
           New User?{' '}
           <Text
-            style={{color: 'blue'}}
+            style={{ color: 'blue' }}
             onPress={() => navigation.navigate('signup')}>
             Sign up
           </Text>{' '}
         </Text>
-        <Text style={{textAlign: 'center', color: 'blue', marginTop: 20}}>
+        <Text
+          style={{ textAlign: 'center', color: 'blue', marginTop: 20 }}
+        >
           For doctors
         </Text>
       </View>
