@@ -49,6 +49,15 @@ const VideoChat = ({navigation, route}) => {
       // this.remoteVideoref.current.srcObject = e.streams[0]
       setremoteStream(e.stream);
     };
+  }, []);
+  // this.pc.setRemoteDescription(new RTCSessionDescription(desc))
+  const makeCall = () => {
+    pc.createOffer({offerToReceiveVideo: 1}).then(pcoffer => {
+      pc.setLocalDescription(pcoffer);
+      socket.emit('offerOrcall', {offer: pcoffer, to: route.params.id});
+    });
+  };
+  const answerCall = () => {
     let isFront = true;
     mediaDevices.enumerateDevices().then(sourceInfos => {
       // console.log(sourceInfos);
@@ -56,8 +65,8 @@ const VideoChat = ({navigation, route}) => {
       for (let i = 0; i < sourceInfos.length; i++) {
         const sourceInfo = sourceInfos[i];
         if (
-          sourceInfo.kind == 'videoinput' &&
-          sourceInfo.facing == (isFront ? 'front' : 'environment')
+          sourceInfo.kind === 'videoinput' &&
+          sourceInfo.facing === (isFront ? 'front' : 'environment')
         ) {
           videoSourceId = sourceInfo.deviceId;
         }
@@ -81,21 +90,12 @@ const VideoChat = ({navigation, route}) => {
         .then(stream => {
           setlocalStream(stream);
           pc.addStream(stream);
+          pc.createAnswer({offerToReceiveVideo: 1}).then(ans => {
+            pc.setLocalDescription(ans);
+            socket.emit('offerOrcall', {answer: ans, to: route.params.id});
+          });
         })
         .catch(err => console.log('user media error ->', err));
-    });
-  }, []);
-  // this.pc.setRemoteDescription(new RTCSessionDescription(desc))
-  const makeCall = () => {
-    pc.createOffer({offerToReceiveVideo: 1}).then(pcoffer => {
-      pc.setLocalDescription(pcoffer);
-      socket.emit('offerOrcall', {offer: pcoffer, to: route.params.id});
-    });
-  };
-  const answerCall = () => {
-    pc.createAnswer({offerToReceiveVideo: 1}).then(ans => {
-      pc.setLocalDescription(ans);
-      socket.emit('offerOrcall', {answer: ans, to: route.params.id});
     });
   };
 
