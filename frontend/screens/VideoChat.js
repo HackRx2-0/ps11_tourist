@@ -30,11 +30,15 @@ const VideoChat = ({navigation, route}) => {
   useEffect(() => {
     socket.on('offerOrAnswer', sdp => {
       // set sdp as remote description
-      pc.setRemoteDescription(new RTCSessionDescription(sdp));
+      pc.setRemoteDescription(new RTCSessionDescription(sdp))
+        .then()
+        .catch(err => console.log(err));
     });
 
     socket.on('candidate', data => {
-      pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+      pc.addIceCandidate(new RTCIceCandidate(data.candidate))
+        .then()
+        .catch(err => console.log(err));
     });
 
     pc.onicecandidate = e => {
@@ -87,16 +91,24 @@ const VideoChat = ({navigation, route}) => {
   }, []);
   // this.pc.setRemoteDescription(new RTCSessionDescription(desc))
   const makeCall = () => {
-    pc.createOffer({offerToReceiveVideo: 1}).then(pcoffer => {
-      pc.setLocalDescription(pcoffer);
-      socket.emit('offerOrAnswer', {offer: pcoffer, to: route.params.id});
-    });
+    pc.createOffer({offerToReceiveVideo: 1})
+      .then(pcoffer => {
+        pc.setLocalDescription(pcoffer)
+          .then()
+          .catch(err => console.log(err));
+        socket.emit('offerOrAnswer', {offer: pcoffer, to: route.params.id});
+      })
+      .catch(err => console.log(err));
   };
   const answerCall = () => {
-    pc.createAnswer({offerToReceiveVideo: 1}).then(ans => {
-      pc.setLocalDescription(ans);
-      socket.emit('offerOrAnswer', {answer: ans, to: route.params.id});
-    });
+    pc.createAnswer({offerToReceiveVideo: 1})
+      .then(ans => {
+        pc.setLocalDescription(ans)
+          .then()
+          .catch(err => console.log(err));
+        socket.emit('offerOrAnswer', {answer: ans, to: route.params.id});
+      })
+      .catch(err => console.log(err));
   };
 
   return (
