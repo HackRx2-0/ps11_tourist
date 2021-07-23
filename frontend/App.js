@@ -16,6 +16,7 @@ import Login from './screens/Login';
 import UserSignup from './screens/userSignup';
 import DoctorSignup from './screens/doctorSignup';
 import ChatWindow from './screens/ChatWindow';
+import VideoChat from './screens/VideoChat';
 
 const Stack = createStackNavigator();
 function Navigation() {
@@ -54,6 +55,11 @@ function Navigation() {
             <Stack.Screen
               name="chatwindow"
               component={ChatWindow}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="videochat"
+              component={VideoChat}
               options={{headerShown: false}}
             />
           </>

@@ -73,6 +73,20 @@ io.on("connection", (socket) => {
     })
   })
 
+  socket.on('offerOrAnswer', (data) => {
+    console.log("offerOrAnswer => ", data);
+    socket.to(data.to).emit("offerOrAnswer", {
+      offer: data.offer,
+    })
+
+  })
+
+
+  socket.on("candidate", data => {
+    console.log("ice -> ", data);
+    socket.broadcast.emit("candidate",{candidate : data.candidate})
+  })
+
 });
 
 

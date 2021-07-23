@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {Text, View, StyleSheet, TextInput, FlatList, Alert} from 'react-native';
+import {Text, View, StyleSheet, TextInput, FlatList} from 'react-native';
 import {Button} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import {WebSocketContext} from '../SocketWrapper';
@@ -20,6 +20,11 @@ const ChatWindow = ({navigation, route}) => {
     <View style={styles.container}>
       <View style={styles.topBar}>
         <Text style={{fontSize: 24}}>{name}</Text>
+        <Button
+          mode="contained"
+          onPress={() => navigation.navigate('videochat')}>
+          video
+        </Button>
       </View>
       <FlatList
         style={{marginTop: 90, width: '100%', padding: 10}}

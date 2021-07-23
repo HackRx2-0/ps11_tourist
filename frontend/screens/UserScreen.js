@@ -30,8 +30,8 @@ const UserScreen = () => {
                 <Image
                   source={
                     el.type === 'Doctor'
-                      ? require('../assets/user_icon.jpg')
-                      : require('../assets/doc_icon.jpg')
+                      ? require('../assets/doc_icon.jpg')
+                      : require('../assets/user_icon.jpg')
                   }
                   style={styles.icon}
                 />
