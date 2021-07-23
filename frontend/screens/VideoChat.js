@@ -52,9 +52,44 @@ const VideoChat = ({navigation, route}) => {
   }, []);
   // this.pc.setRemoteDescription(new RTCSessionDescription(desc))
   const makeCall = () => {
-    pc.createOffer({offerToReceiveVideo: 1}).then(pcoffer => {
-      pc.setLocalDescription(pcoffer);
-      socket.emit('offerOrcall', {offer: pcoffer, to: route.params.id});
+    let isFront = true;
+    mediaDevices.enumerateDevices().then(sourceInfos => {
+      // console.log(sourceInfos);
+      let videoSourceId;
+      for (let i = 0; i < sourceInfos.length; i++) {
+        const sourceInfo = sourceInfos[i];
+        if (
+          sourceInfo.kind === 'videoinput' &&
+          sourceInfo.facing === (isFront ? 'front' : 'environment')
+        ) {
+          videoSourceId = sourceInfo.deviceId;
+        }
+      }
+
+      const constraints = {
+        audio: true,
+        video: {
+          mandatory: {
+            minWidth: 500, // Provide your own width, height and frame rate here
+            minHeight: 300,
+            minFrameRate: 30,
+          },
+          facingMode: isFront ? 'user' : 'environment',
+          optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
+        },
+      };
+
+      mediaDevices
+        .getUserMedia(constraints)
+        .then(stream => {
+          setlocalStream(stream);
+          pc.addStream(stream);
+          pc.createOffer({offerToReceiveVideo: 1}).then(pcoffer => {
+            pc.setLocalDescription(pcoffer);
+            socket.emit('offerOrcall', {offer: pcoffer, to: route.params.id});
+          });
+        })
+        .catch(err => console.log('user media error ->', err));
     });
   };
   const answerCall = () => {
