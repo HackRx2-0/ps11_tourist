@@ -6,7 +6,7 @@ import {
 } from '../Actions/types';
 
 const initialState = {
-  docs: [],
+  users: [],
   msg: [],
 };
 
@@ -15,13 +15,13 @@ const realtimeReducer = (state = initialState, action) => {
     case GET_ONLINE_USERS:
       return {
         ...state,
-        docs: action.payload,
+        users: action.payload,
       };
     case NEW_ONLINE_USER:
-      const newDoc = [...state.docs, action.payload];
+      const newDoc = [...state.users, action.payload];
       return {
         ...state,
-        docs: newDoc,
+        users: newDoc,
       };
     case NEW_MSG:
       const newMsg = [...state.msg, action.payload];

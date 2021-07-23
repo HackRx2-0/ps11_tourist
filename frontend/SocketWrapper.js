@@ -6,13 +6,13 @@ import {
   NEW_MSG,
   NEW_ONLINE_USER,
 } from './redux/Actions/types';
-const socket = io('http://30ab1b251625.ngrok.io', {
+const socket = io('http://53b66fa00edf.ngrok.io', {
   autoConnect: false,
 });
 const WebSocketContext = createContext();
 function SocketWrapper({children}) {
   const dispatch = useDispatch();
-  const email = useSelector(state => state.auth.email);
+  const type = useSelector(state => state.auth.type);
   const name = useSelector(state => state.auth.name);
   useEffect(() => {
     socket.on('msg', data => {
@@ -25,6 +25,7 @@ function SocketWrapper({children}) {
     });
 
     socket.on('online_users', data => {
+      console.log(data);
       dispatch({type: GET_ONLINE_USERS, payload: data});
     });
 
@@ -40,8 +41,8 @@ function SocketWrapper({children}) {
   };
 
   const connect = () => {
-    console.log("inn");
-    socket.auth = {email, name};
+    console.log('inn');
+    socket.auth = {type, name};
     socket.connect();
   };
 

@@ -6,7 +6,7 @@ import {WebSocketContext} from '../SocketWrapper';
 
 const ChatWindow = ({navigation, route}) => {
   const webSocket = useContext(WebSocketContext);
-  const {userId} = route.params;
+  const {userId, name} = route.params;
   const msgs = useSelector(state => state.realtime.msg);
   const [msg, setMsg] = useState('');
 
@@ -19,7 +19,7 @@ const ChatWindow = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text style={{fontSize: 24}}>Doctor name {userId}</Text>
+        <Text style={{fontSize: 24}}>{name}</Text>
       </View>
       <FlatList
         style={{marginTop: 90, width: '100%', padding: 10}}

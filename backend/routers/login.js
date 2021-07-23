@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 	if (!pass) return res.status(400).send('Email or password is invalid')
 
 	const token = user.generateAuthToken()
-	res.json({jwt:token, name: `${user.first_name} ${user.second_name}`, type:user.__t, email: user.email })
+	res.json({jwt:token, name: `${user.first_name} ${user.last_name}`, type:user.__t, email: user.email })
 })
 
 module.exports = router

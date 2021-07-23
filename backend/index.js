@@ -24,8 +24,8 @@ app.use(express.json())
 app.use('/api', api)
 
 
-const findUser = async () => {
-    let user = await Cred.findOne({ email: req.body.email });
+const findUser = async (email) => {
+    let user = await Cred.findOne({ email });
     return user.user;
   }
 
@@ -33,33 +33,37 @@ const findUser = async () => {
 const io = socketio(server, corsOptions)
  
 io.use((skt, next) => {
-  const email = skt.handshake.auth.email;
-  if (!email) {
+  const type = skt.handshake.auth.type;
+  const name = skt.handshake.auth.name;
+  if (!name) {
     return next(new Error("invalid username"));
   }
-  skt.email = email;
+  skt.type = type;
+  skt.name = name;
   next();
 })
 
 io.on("connection", (socket) => {
   //We are looping over the io.of("/").sockets object, which is a Map of all currently connected Socket instances, indexed by ID.
   console.log(socket.id);
-  const userId = findUser(socket.email);
+  
   
 
   const users = [];
-  for (let s of io.of("/").sockets) {
-    console.log(s);
-    // users.push({
-    //   userId: ,
-    //   username: socket.username,
-    // });
+  for (let [id,socket] of io.of("/").sockets) {
+    users.push({
+       userId: id,
+      username: socket.name,
+       type:socket.type
+     });
   }
-  socket.emit("users", users);
+  console.log(users);
+  socket.emit("online_users", users);
   //socket.broadcast.emit("user connected", ...) will emit to all connected clients, except the socket itself.
-  socket.broadcast.emit("new user", {
-    userID: socket.id,
-    username: socket.username,
+  socket.broadcast.emit("new_user", {
+    userId: socket.id,
+    username: socket.name,
+    type: socket.type
   })
 
   socket.on("msg", ({ msg, to }) => {

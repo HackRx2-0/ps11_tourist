@@ -19,23 +19,19 @@ import ChatWindow from './screens/ChatWindow';
 
 const Stack = createStackNavigator();
 function Navigation() {
-  const isAuth = useSelector(({auth}) => auth.token);
+  const name = useSelector(({auth}) => auth.name);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    async function checkAuth() {
-      const token = await AsyncStorage.getItem('jwt');
-      if (token) {
-        dispatch({type: SET_TOKEN, payload: token});
-      }
+    setTimeout(() => {
       SplashScreen.hide();
-    }
-    checkAuth();
+    }, 1000);
   }, []);
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {!isAuth ? (
+        {!name ? (
           <>
             <Stack.Screen
               name="intro"
@@ -45,16 +41,6 @@ function Navigation() {
             <Stack.Screen
               name="login"
               component={Login}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="userSignup"
-              component={UserSignup}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="doctorSignup"
-              component={DoctorSignup}
               options={{headerShown: false}}
             />
           </>

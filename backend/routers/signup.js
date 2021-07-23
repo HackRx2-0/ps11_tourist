@@ -73,7 +73,7 @@ router.post('/customer', async (req, res) => {
     const token = user.generateAuthToken()
     res.json({
       jwt: token,
-      name: `${userData.first_name} ${userData.second_name}`,
+      name: `${userData.first_name} ${userData.last_name}`,
       type: userData.__t,
       email: user.email
     })

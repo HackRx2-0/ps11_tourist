@@ -4,40 +4,50 @@ import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
 const UserScreen = () => {
-  const docs = useSelector(state => state.realtime.docs);
+  const users = useSelector(state => state.realtime.users);
+  const type = useSelector(state => state.auth.type);
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <Text style={{fontSize: 30}}>Online doctors</Text>
-      <TouchableOpacity
-        style={styles.avl_doc}
-        onPress={() => {
-          navigation.navigate('chatwindow', {userId: 'jkjkj'});
-        }}>
-        <Image source={require('../assets/doc_icon.jpg')} style={styles.icon} />
-        <Text style={{textAlign: 'left', fontSize: 24, marginLeft: 60}}>
-          doc name
-        </Text>
-        <Text style={{marginLeft: 60}}>online</Text>
-      </TouchableOpacity>
-      {docs
-        ? docs.map((el, i) => (
-            <TouchableOpacity
-              key={i}
-              style={styles.avl_doc}
-              onPress={() => {
-                navigation.navigate('chatwindow', {userId: el.userId});
-              }}>
-              <Image
-                source={require('../assets/doc_icon.jpg')}
-                style={styles.icon}
-              />
-              <Text style={{textAlign: 'left', fontSize: 24, marginLeft: 60}}>
-                {el.name}
-              </Text>
-              <Text style={{marginLeft: 60}}>online</Text>
-            </TouchableOpacity>
-          ))
+      {type === 'Doctor' ? (
+        <Text style={{color: '#fff', fontSize: 30}}>Online Patients </Text>
+      ) : (
+        <Text style={{color: '#fff', fontSize: 30}}>Online Doctors</Text>
+      )}
+      {users
+        ? users.map((el, i) => {
+            if (type == el.type) return null;
+            return (
+              <TouchableOpacity
+                key={i}
+                style={styles.avl_doc}
+                onPress={() => {
+                  navigation.navigate('chatwindow', {
+                    userId: el.userId,
+                    name: el.username,
+                  });
+                }}>
+                <Image
+                  source={
+                    el.type === 'Doctor'
+                      ? require('../assets/user_icon.jpg')
+                      : require('../assets/doc_icon.jpg')
+                  }
+                  style={styles.icon}
+                />
+                <Text
+                  style={{
+                    textAlign: 'left',
+                    fontSize: 24,
+                    marginLeft: 60,
+                    color: '#fff',
+                  }}>
+                  {el.username}
+                </Text>
+                <Text style={{marginLeft: 60, color: '#fff'}}>online</Text>
+              </TouchableOpacity>
+            );
+          })
         : null}
     </View>
   );
