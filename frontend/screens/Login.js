@@ -84,7 +84,7 @@ const Login = ({ navigation }) => {
           New User?{' '}
           <Text
             style={{ color: 'blue' }}
-            onPress={() => navigation.navigate('signup')}>
+            onPress={() => navigation.navigate('userSignup')}>
             Sign up
           </Text>{' '}
         </Text>
