@@ -22,7 +22,7 @@ const ChatWindow = ({navigation, route}) => {
         <Text style={{fontSize: 24}}>{name}</Text>
         <Button
           mode="contained"
-          onPress={() => navigation.navigate('videochat')}>
+          onPress={() => navigation.navigate('videochat', {id: userId})}>
           video
         </Button>
       </View>

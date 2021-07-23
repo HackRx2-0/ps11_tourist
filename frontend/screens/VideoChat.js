@@ -49,9 +49,6 @@ const VideoChat = ({navigation, route}) => {
       // this.remoteVideoref.current.srcObject = e.streams[0]
       setremoteStream(e.stream);
     };
-  }, []);
-  // this.pc.setRemoteDescription(new RTCSessionDescription(desc))
-  const makeCall = () => {
     let isFront = true;
     mediaDevices.enumerateDevices().then(sourceInfos => {
       // console.log(sourceInfos);
@@ -59,8 +56,8 @@ const VideoChat = ({navigation, route}) => {
       for (let i = 0; i < sourceInfos.length; i++) {
         const sourceInfo = sourceInfos[i];
         if (
-          sourceInfo.kind === 'videoinput' &&
-          sourceInfo.facing === (isFront ? 'front' : 'environment')
+          sourceInfo.kind == 'videoinput' &&
+          sourceInfo.facing == (isFront ? 'front' : 'environment')
         ) {
           videoSourceId = sourceInfo.deviceId;
         }
@@ -84,53 +81,21 @@ const VideoChat = ({navigation, route}) => {
         .then(stream => {
           setlocalStream(stream);
           pc.addStream(stream);
-          pc.createOffer({offerToReceiveVideo: 1}).then(pcoffer => {
-            pc.setLocalDescription(pcoffer);
-            socket.emit('offerOrcall', {offer: pcoffer, to: route.params.id});
-          });
         })
         .catch(err => console.log('user media error ->', err));
     });
+  }, []);
+  // this.pc.setRemoteDescription(new RTCSessionDescription(desc))
+  const makeCall = () => {
+    pc.createOffer({offerToReceiveVideo: 1}).then(pcoffer => {
+      pc.setLocalDescription(pcoffer);
+      socket.emit('offerOrAnswer', {offer: pcoffer, to: route.params.id});
+    });
   };
   const answerCall = () => {
-    let isFront = true;
-    mediaDevices.enumerateDevices().then(sourceInfos => {
-      // console.log(sourceInfos);
-      let videoSourceId;
-      for (let i = 0; i < sourceInfos.length; i++) {
-        const sourceInfo = sourceInfos[i];
-        if (
-          sourceInfo.kind === 'videoinput' &&
-          sourceInfo.facing === (isFront ? 'front' : 'environment')
-        ) {
-          videoSourceId = sourceInfo.deviceId;
-        }
-      }
-
-      const constraints = {
-        audio: true,
-        video: {
-          mandatory: {
-            minWidth: 500, // Provide your own width, height and frame rate here
-            minHeight: 300,
-            minFrameRate: 30,
-          },
-          facingMode: isFront ? 'user' : 'environment',
-          optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
-        },
-      };
-
-      mediaDevices
-        .getUserMedia(constraints)
-        .then(stream => {
-          setlocalStream(stream);
-          pc.addStream(stream);
-          pc.createAnswer({offerToReceiveVideo: 1}).then(ans => {
-            pc.setLocalDescription(ans);
-            socket.emit('offerOrcall', {answer: ans, to: route.params.id});
-          });
-        })
-        .catch(err => console.log('user media error ->', err));
+    pc.createAnswer({offerToReceiveVideo: 1}).then(ans => {
+      pc.setLocalDescription(ans);
+      socket.emit('offerOrAnswer', {answer: ans, to: route.params.id});
     });
   };
 
