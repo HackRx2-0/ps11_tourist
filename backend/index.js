@@ -70,6 +70,7 @@ io.on("connection", (socket) => {
     socket.to(to).emit("msg", {
       msg,
       from: socket.id,
+      to,
     })
   })
 

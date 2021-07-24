@@ -9,7 +9,7 @@ const ChatWindow = ({navigation, route}) => {
   const {userId, name} = route.params;
   const msgs = useSelector(state => state.realtime.msg);
   const [msg, setMsg] = useState('');
-
+  console.log(msgs);
   const Item = ({msg, self}) => (
     <View style={self ? styles.msg_me : styles.msg}>
       <Text>{msg}</Text>
@@ -28,7 +28,14 @@ const ChatWindow = ({navigation, route}) => {
       </View>
       <FlatList
         style={{marginTop: 90, width: '100%', padding: 10}}
-        data={msgs}
+        data={msgs.map(el => {
+          if (el.self && el.to === userId) {
+            return el;
+          }
+          if (el.from === userId) {
+            return el;
+          }
+        })}
         renderItem={renderItem}
       />
       <View style={styles.msg_box}>
