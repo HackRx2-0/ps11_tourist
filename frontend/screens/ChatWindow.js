@@ -7,7 +7,13 @@ import {WebSocketContext} from '../SocketWrapper';
 const ChatWindow = ({navigation, route}) => {
   const webSocket = useContext(WebSocketContext);
   const {userId, name} = route.params;
-  const msgs = useSelector(state => state.realtime.msg);
+  const msgs = useSelector(state => state.realtime.msg).map(el => {
+          if (el.self && el.to === userId) {
+            return el;
+          }
+          if (el.from === userId) {
+            return el;
+          };
   const [msg, setMsg] = useState('');
   console.log(msgs);
   const Item = ({msg, self}) => (
@@ -28,14 +34,7 @@ const ChatWindow = ({navigation, route}) => {
       </View>
       <FlatList
         style={{marginTop: 90, width: '100%', padding: 10}}
-        data={msgs.map(el => {
-          if (el.self && el.to === userId) {
-            return el;
-          }
-          if (el.from === userId) {
-            return el;
-          }
-        })}
+        data={msgs}
         renderItem={renderItem}
       />
       <View style={styles.msg_box}>

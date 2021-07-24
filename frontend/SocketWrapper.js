@@ -6,7 +6,7 @@ import {
   NEW_MSG,
   NEW_ONLINE_USER,
 } from './redux/Actions/types';
-const socket = io('http://97a95553bd6a.ngrok.io/', {
+const socket = io('http://33f7062c1a84.ngrok.io', {
   autoConnect: false,
 });
 const WebSocketContext = createContext();
